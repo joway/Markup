@@ -76,6 +76,9 @@ class TemplateNode(object):
     def template_bold(self, parsed):
         return self.replace_value(self._template, parsed['values'][0])
 
+    def template_raw(self, parsed):
+        return self.replace_value(self._template, parsed['values'][0])
+
 
 class Template(object):
     def __init__(self, parsed):
@@ -85,6 +88,8 @@ class Template(object):
 
     def render(self):
         _html = []
+        if not self._parsed:
+            return ''
         for line in self._parsed:
             node = TemplateNode(line)
             _html.append(str(node))

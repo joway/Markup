@@ -44,6 +44,7 @@ def p_expression(p):
                    | olists
                    | line CR
                    | cr
+                   | func
     '''
     p[0] = p[1]
 
@@ -127,6 +128,11 @@ def p_expression_ulists(p):
 def p_expression_head(p):
     '''headline : HEAD LINE CR'''
     p[0] = wrapper('HEADING', [p[2].strip()], level=len(p[1]))
+
+
+def p_expression_func(p):
+    '''func : FUNC'''
+    p[0] = wrapper('FUNC', ['func'])
 
 
 def p_error(p):

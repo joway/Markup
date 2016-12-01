@@ -8,7 +8,8 @@ tokens = (
     'BOLD',
     'ITALIC',
     'LINE',
-    'CR'
+    'CR',
+    'FUNC'
 )
 
 
@@ -50,6 +51,11 @@ def t_LINE(t):
 def t_CR(t):
     r'\n'
     t.lexer.lineno += len(t.value)
+    return t
+
+
+def t_FUNC(t):
+    r'{% (.+?) %}(.+?){% (.+?) %}'
     return t
 
 

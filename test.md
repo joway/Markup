@@ -10,3 +10,14 @@
 1. 一个list
 2. 二个list
 
+
+{% funciton: param1, param2 %}
+
+{% func funciton %}
+param string
+{% endfunc funciton %}
+
+{% func funciton: param2, param3 %}
+param string
+{% endfunc funciton %}
+
