@@ -15,7 +15,11 @@ def gen_templates_mapper(directory=TEMPLATES_DIR):
 
 
 TEMPLATES_MAPPER = gen_templates_mapper()
-FOR_ENDFOR_RE = r'{% for %}(.+?){% endfor %}'
+
+# re
+FOR_ENDFOR_RE = r'{% for %}(.+){% endfor %}'
+VALUE_RE = r'{{ value }}'
+LEVEL_RE = r'{{ level }}'
 
 
 class TemplateNode(object):
@@ -29,16 +33,16 @@ class TemplateNode(object):
         return self._rendered
 
     def replace_value(self, _template, value):
-        return re.sub(r'{{ value }}', repl=value, string=_template)
+        return re.sub(VALUE_RE, repl=value, string=_template)
 
     def get_for_wrapper(self, _template):
         return re.sub(FOR_ENDFOR_RE, repl='%s', string=_template)
 
     def get_for_child(self, _template):
-        return re.findall(FOR_ENDFOR_RE, string=self._template, flags=re.S)[0]
+        return re.findall(FOR_ENDFOR_RE, string=_template, flags=re.S)[0]
 
     def template_heading(self, parsed):
-        level_replaced = re.sub(r'{{ level }}', repl=str(parsed['level']), string=self._template)
+        level_replaced = re.sub(LEVEL_RE, repl=str(parsed['level']), string=self._template)
         result = self.replace_value(level_replaced, parsed['values'][0])
         return result
 
@@ -71,3 +75,21 @@ class TemplateNode(object):
 
     def template_bold(self, parsed):
         return self.replace_value(self._template, parsed['values'][0])
+
+
+class Template(object):
+    def __init__(self, parsed):
+        self._parsed = parsed
+        self.rendered = None
+        self.render()
+
+    def render(self):
+        _html = []
+        for line in self._parsed:
+            node = TemplateNode(line)
+            _html.append(str(node))
+
+        self.rendered = ''.join(_html)
+
+    def __str__(self):
+        return self.rendered
