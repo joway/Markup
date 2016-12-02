@@ -25,9 +25,11 @@ LEVEL_RE = r'{{ level }}'
 class TemplateNode(object):
     def __init__(self, parsed):
         self._type = parsed['type']
-        self._template = TEMPLATES_MAPPER[self._type]
-
-        self._rendered = getattr(self, 'template_%s' % self._type.lower())(parsed)
+        if self._type != 'FUNC':
+            self._template = TEMPLATES_MAPPER[self._type]
+            self._rendered = getattr(self, 'template_%s' % self._type.lower())(parsed)
+        else:
+            self._rendered = ''
 
     def __str__(self):
         return self._rendered
@@ -43,13 +45,13 @@ class TemplateNode(object):
 
     def template_heading(self, parsed):
         level_replaced = re.sub(LEVEL_RE, repl=str(parsed['level']), string=self._template)
-        result = self.replace_value(level_replaced, parsed['values'][0])
+        result = self.replace_value(level_replaced, parsed['value'])
         return result
 
     def template_list(self, parsed):
         li_tmpl = self.get_for_child(self._template)
         wrapper_li = self.get_for_wrapper(self._template)
-        lis_html = [self.replace_value(li_tmpl, value) for value in parsed['values']]
+        lis_html = [self.replace_value(li_tmpl, value) for value in parsed['value']]
         return wrapper_li % ''.join(lis_html)
 
     def template_olist(self, parsed):
@@ -63,7 +65,7 @@ class TemplateNode(object):
 
     def template_line(self, parsed):
         _html = []
-        for value in parsed['values']:
+        for value in parsed['value']:
             if isinstance(value, dict):
                 _html.append(str(TemplateNode(value)))
             else:
@@ -71,13 +73,13 @@ class TemplateNode(object):
         return self.replace_value(self._template, ''.join(_html))
 
     def template_quote(self, parsed):
-        return self.replace_value(self._template, parsed['values'][0])
+        return self.replace_value(self._template, parsed['value'][0])
 
     def template_bold(self, parsed):
-        return self.replace_value(self._template, parsed['values'][0])
+        return self.replace_value(self._template, parsed['value'][0])
 
     def template_raw(self, parsed):
-        return self.replace_value(self._template, parsed['values'][0])
+        return self.replace_value(self._template, parsed['value'][0])
 
 
 class Template(object):

@@ -1,61 +1,53 @@
 import ply.lex as lex
 
 tokens = (
+    # markdown
     'HEAD',
     'QUOTE',
     'OLIST',
     'ULIST',
     'BOLD',
     'ITALIC',
-    'LINE',
+
+    # function
+    'DOLLAR',  # $
+    'LEFT_PAREN',  # (
+    'RIGHT_PAREN',  # )
+    'LEFT_BRACE',  # {
+    'RIGHT_BRACE',  # }
+
+    'WORD',
+    'EMPTY',
     'CR',
-    'FUNC'
+
+    # symbol
+    # 'COMMA',
+    # 'SEMI',
 )
 
+# Markdown
+t_HEAD = r'^(?m)\#{1,6} '
+t_QUOTE = r'(?m)^\> '
+t_OLIST = r'(?m)^\d+\.\ '
+t_ULIST = r'(?m)^(\*|-)\ '
+t_BOLD = r'\*\*'
 
-def t_HEAD(t):
-    r'(?m)^\#{1,6} '
-    return t
+# Function
+t_DOLLAR = r'\$'
+t_LEFT_PAREN = r'\('
+t_RIGHT_PAREN = r'\)'
+t_LEFT_BRACE = r'\{'
+t_RIGHT_BRACE = r'\}'
+t_ITALIC = r'\_\_'
 
-
-def t_QUOTE(t):
-    r'(?m)^\> '
-    return t
-
-
-def t_OLIST(t):
-    r'(?m)^\d+\.\ '
-    return t
-
-
-def t_ULIST(t):
-    r'(?m)^(\*|-)\ '
-    return t
-
-
-def t_BOLD(t):
-    r'\*\*'
-    return t
-
-
-def t_ITALIC(t):
-    r'\_\_'
-    return t
-
-
-def t_LINE(t):
-    r'([^\*\_\n])+'
-    return t
+# t_LINE = r'([^\*\_\n])+'
+t_EMPTY = r'\s+'
+t_WORD = r'\w+'
 
 
 def t_CR(t):
     r'\n'
     t.lexer.lineno += len(t.value)
-    return t
-
-
-def t_FUNC(t):
-    r'{% (.+?) %}(.+?){% (.+?) %}'
     return t
 
 
@@ -65,17 +57,20 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-lexer = lex.lex()
+lexer = lex.lex(debug=False)
 
 if __name__ == '__main__':
     # 测试数据
     s = '''
-    # 一级标题
+# 123
 
-    ## 二级标题
+1. xxx
+2. aaaa
 
-    > 引用
-    '''
+$center {
+code
+}
+   '''
 
     lexer.input(s)
 

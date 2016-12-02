@@ -18,15 +18,16 @@
 
 ## 语法
 
-    {{ funciton: param1, param2 }}
-    
-    {% func funciton %}
-    param string
-    {% endfunc funciton %}
-    
-    {% func funciton: param2, param3 %}
-    param string
-    {% endfunc funciton %}
+### 排版
+
+$center|left|right {
+}
+
+$func(opt1, opt2){
+  content
+}$
+
+$func(opt1, opt2)
 
 ## TODO:
 
